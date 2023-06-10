@@ -1,10 +1,10 @@
-import React from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 // Pages
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import { useEffect } from 'react';
 
 const router = createBrowserRouter([
     {
@@ -27,6 +27,10 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+    useEffect(() => {
+        document.body.style.background = '#eee';
+    }, []);
+
     return <RouterProvider router={router} />;
 }
 
