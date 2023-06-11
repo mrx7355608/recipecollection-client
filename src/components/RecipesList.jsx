@@ -1,6 +1,5 @@
-import React from 'react';
 import { Flex } from '@chakra-ui/react';
-import Recipe from './Recipe';
+import Recipe from './Recipe/Card';
 
 export default function RecipesList() {
     return (
