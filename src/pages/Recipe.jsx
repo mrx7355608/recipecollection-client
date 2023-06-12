@@ -29,9 +29,10 @@ export default function Recipe() {
                 {/* DETAILS */}
                 <Details />
 
-                <Flex gap="3" h="full">
-                    <Box w="full">
+                <Flex gap="5" h="full">
+                    <Box bg="white" borderRadius={'md'} p="7" shadow="sm">
                         <Ingredients ingredients={ingredients} />
+                        <Box my="8"></Box>
                         <Steps steps={steps} />
                     </Box>
                     <ChefInfo />

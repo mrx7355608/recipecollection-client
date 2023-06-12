@@ -3,8 +3,8 @@ import { Heading, OrderedList, ListItem, Box } from '@chakra-ui/react';
 // eslint-disable-next-line react/prop-types
 export default function Steps({ steps }) {
     return (
-        <Box mt="3" bg="white" borderRadius={'md'} p="7" shadow="sm">
-            <Heading mt="1" fontSize={'3xl'} mb="4">
+        <>
+            <Heading mt="1" fontSize={'2xl'} mb="4">
                 Steps
             </Heading>
             <OrderedList ml="7">
@@ -20,6 +20,6 @@ export default function Steps({ steps }) {
                     );
                 })}
             </OrderedList>
-        </Box>
+        </>
     );
 }
