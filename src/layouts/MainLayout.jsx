@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useEffect } from 'react';
+import Footer from '../components/Footer';
 
 export default function MainLayout() {
     useEffect(() => {
@@ -11,7 +12,7 @@ export default function MainLayout() {
         <>
             <Navbar />
             <Outlet />
-            {/* Footer */}
+            <Footer />
         </>
     );
 }
