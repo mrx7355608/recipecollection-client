@@ -9,7 +9,6 @@ export default function Home() {
 
     return (
         <>
-            <Navbar />
             <Hero />
             <Flex direction={'column'} px="4" alignItems={'flex-start'}>
                 <Box mt="12"></Box>

@@ -6,18 +6,27 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Recipe from './pages/Recipe';
 import { useEffect } from 'react';
+import MainLayout from './layouts/MainLayout';
+import AuthLayout from './layouts/AuthLayout';
 
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <Home />,
-    },
-    {
-        path: '/recipes/:id',
-        element: <Recipe />,
+        element: <MainLayout />,
+        children: [
+            {
+                index: true,
+                element: <Home />,
+            },
+            {
+                path: '/recipes/:id',
+                element: <Recipe />,
+            },
+        ],
     },
     {
         path: '/auth',
+        element: <AuthLayout />,
         children: [
             {
                 path: 'login',
@@ -32,10 +41,6 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-    useEffect(() => {
-        document.body.style.background = '#eee';
-    }, []);
-
     return <RouterProvider router={router} />;
 }
 

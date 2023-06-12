@@ -24,7 +24,6 @@ export default function Recipe() {
 
     return (
         <>
-            <Navbar />
             <Flex direction={'column'} p="6">
                 {/* DETAILS */}
                 <Details />
