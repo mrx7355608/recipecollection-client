@@ -8,6 +8,7 @@ import Recipe from './pages/Recipe';
 import { useEffect } from 'react';
 import MainLayout from './layouts/MainLayout';
 import AuthLayout from './layouts/AuthLayout';
+import UserProfile from './pages/UserProfile';
 
 const router = createBrowserRouter([
     {
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
             {
                 path: '/recipes/:id',
                 element: <Recipe />,
+            },
+            {
+                path: '/profile',
+                element: <UserProfile />,
             },
         ],
     },
