@@ -1,24 +1,9 @@
-import {
-    Box,
-    Heading,
-    Text,
-    VStack,
-    Button,
-    ButtonGroup,
-    HStack,
-    Divider,
-} from '@chakra-ui/react';
+import { Box, Heading, Button, ButtonGroup, HStack } from '@chakra-ui/react';
 import { FaFacebook, FaInstagram, FaTwitter } from 'react-icons/fa';
 
 export default function Footer() {
     return (
-        <Box
-            color="gray.500"
-            textAlign={'center'}
-            fontSize={'xs'}
-            bg="gray.900"
-            p="6"
-        >
+        <Box textAlign={'center'} fontSize={'xs'} bg="gray.800" p="6">
             <Box w="full" h="1px" bg="gray.700" mb="4"></Box>
             <HStack alignItems={'center'} justifyContent={'space-between'}>
                 <Heading fontSize={'xl'} color="gray.400" mb="3">
