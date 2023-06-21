@@ -1,7 +1,11 @@
 import { Box, Button, Flex, Heading, List, ListItem } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
+import { useUser } from '../contexts/user';
+import { logout } from '../services/auth';
 
 export default function Navbar() {
+    const { user, userDispatcher } = useUser();
+
     return (
         <Flex
             alignItems="center"
@@ -26,26 +30,52 @@ export default function Navbar() {
                     <ListItem>CONTACT</ListItem>
                     <ListItem>ABOUT</ListItem>
                 </List>
-                <Box>
-                    <Button
-                        borderRadius="none"
-                        variant="outline"
-                        colorScheme="black"
-                        fontSize="xs"
-                    >
-                        <Link to="/auth/signup">SIGNUP</Link>
-                    </Button>
-                    <Button
-                        fontSize="xs"
-                        borderRadius="none"
-                        ml="4"
-                        color="white"
-                        bg="black"
-                    >
-                        <Link to="/auth/login">LOGIN</Link>
-                    </Button>
-                </Box>
+                {user == null ? (
+                    <Box>
+                        <Button
+                            borderRadius="none"
+                            variant="outline"
+                            colorScheme="black"
+                            fontSize="xs"
+                        >
+                            <Link to="/auth/signup">SIGNUP</Link>
+                        </Button>{' '}
+                        <Button
+                            fontSize="xs"
+                            borderRadius="none"
+                            ml="4"
+                            color="white"
+                            bg="black"
+                        >
+                            <Link to="/auth/login">LOGIN</Link>
+                        </Button>
+                    </Box>
+                ) : (
+                    <Flex alignItems={'center'} gap="6">
+                        <Heading fontSize={'md'} fontWeight={'medium'}>
+                            {user.fullname}
+                        </Heading>
+                        <Button
+                            onClick={async () => await logoutUser()}
+                            borderRadius="none"
+                            variant="outline"
+                            colorScheme="red"
+                            fontSize="xs"
+                        >
+                            LOGOUT
+                        </Button>
+                    </Flex>
+                )}
             </Flex>
         </Flex>
     );
+
+    async function logoutUser() {
+        const { error, data } = await logout();
+        if (error) return console.log(error);
+        if (data.logout == true) {
+            userDispatcher({ type: 'LOGOUT' });
+        }
+        return;
+    }
 }
