@@ -1,14 +1,18 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 // Pages
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Recipe from './pages/Recipe';
-import { useEffect } from 'react';
 import MainLayout from './layouts/MainLayout';
 import AuthLayout from './layouts/AuthLayout';
 import UserProfile from './pages/UserProfile';
+
+import { getUserData } from './services/user';
+import { useUser } from './contexts/user';
+import { Flex, Heading, Spinner } from '@chakra-ui/react';
 
 const router = createBrowserRouter([
     {
@@ -46,6 +50,40 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+    const { userDispatcher } = useUser();
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        document.body.style.background = 'rgb(245, 245, 245)';
+        // Fetch user
+        console.log('fetching user');
+        getUserData()
+            .then((resp) => {
+                setLoading(false);
+                userDispatcher({
+                    type: 'FETCHED_USER_DATA',
+                    user: resp.data.user,
+                });
+            })
+            .catch((err) => {
+                setLoading(false);
+                console.log(err.response.data.error); // TODO: Remove this
+            });
+    }, []);
+
+    if (loading) {
+        return (
+            <Flex
+                alignItems={'center'}
+                justifyContent={'center'}
+                h="100vh"
+                w="100vw"
+            >
+                <Spinner size={'md'} color="yellow.500" />
+            </Flex>
+        );
+    }
+
     return <RouterProvider router={router} />;
 }
 
