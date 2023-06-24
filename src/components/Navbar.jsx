@@ -25,36 +25,48 @@ export default function Navbar() {
                     fontSize="xs"
                     fontWeight="semibold"
                 >
-                    <ListItem>HOME</ListItem>
+                    <ListItem>
+                        <Link to="/">HOME</Link>
+                    </ListItem>
                     <ListItem>RECIPES</ListItem>
-                    <ListItem>CONTACT</ListItem>
-                    <ListItem>ABOUT</ListItem>
+                    <ListItem>
+                        <Link to="/contact">CONTACT</Link>
+                    </ListItem>
+                    <ListItem>
+                        <Link to="/about">ABOUT</Link>
+                    </ListItem>
                 </List>
                 {user == null ? (
                     <Box>
-                        <Button
-                            borderRadius="none"
-                            variant="outline"
-                            colorScheme="black"
-                            fontSize="xs"
-                        >
-                            <Link to="/auth/signup">SIGNUP</Link>
-                        </Button>{' '}
-                        <Button
-                            fontSize="xs"
-                            borderRadius="none"
-                            ml="4"
-                            color="white"
-                            bg="black"
-                        >
-                            <Link to="/auth/login">LOGIN</Link>
-                        </Button>
+                        <Link to="/auth/signup">
+                            <Button
+                                borderRadius="none"
+                                variant="outline"
+                                colorScheme="black"
+                                fontSize="xs"
+                            >
+                                SIGNUP
+                            </Button>{' '}
+                        </Link>
+                        <Link to="/auth/login">
+                            <Button
+                                fontSize="xs"
+                                borderRadius="none"
+                                ml="4"
+                                color="white"
+                                bg="black"
+                            >
+                                LOGIN
+                            </Button>
+                        </Link>
                     </Box>
                 ) : (
                     <Flex alignItems={'center'} gap="6">
-                        <Heading fontSize={'md'} fontWeight={'medium'}>
-                            {user.fullname}
-                        </Heading>
+                        <Link to="/profile">
+                            <Heading fontSize={'md'} fontWeight={'medium'}>
+                                {user.fullname}
+                            </Heading>
+                        </Link>
                         <Button
                             onClick={async () => await logoutUser()}
                             borderRadius="none"
