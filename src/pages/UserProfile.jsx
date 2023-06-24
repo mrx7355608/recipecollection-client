@@ -7,6 +7,7 @@ import {
     Heading,
     HStack,
     Input,
+    Spinner,
 } from '@chakra-ui/react';
 import Card from '../components/Recipe/Card';
 import {
@@ -17,12 +18,49 @@ import {
     FaLock,
     FaUser,
 } from 'react-icons/fa';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useUser } from '../contexts/user';
+import { useNavigate } from 'react-router-dom';
+import { editUserData, getUserData } from '../services/user';
 
 export default function UserProfile() {
+    const { user } = useUser();
+    const navigateTo = useNavigate();
+    const [userDetails, setUserDetails] = useState({});
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        if (!user) return navigateTo('/');
+        // Fetch complete user details
+        setLoading(true);
+        getUserData()
+            .then(({ data }) => {
+                console.log(data.user);
+                setLoading(false);
+                return setUserDetails(data.user);
+            })
+            .catch((err) => {
+                setLoading(false);
+                console.log(err);
+            });
+    }, [user]);
+
+    if (loading) {
+        return (
+            <Flex
+                alignItems={'center'}
+                justifyContent={'center'}
+                h="100vh"
+                w="100vw"
+            >
+                <Spinner size={'md'} color="yellow.500" />
+            </Flex>
+        );
+    }
+
     return (
         <VStack my="10" p="5" gap="5" justifyContent={'center'} w="full">
-            <HStack gap="5" alignItems={'center'} w="full">
+            <HStack gap="5" alignItems={'flex-start'} w="full">
                 {/* USER DETAILS */}
                 <Box
                     bg="white"
@@ -37,38 +75,48 @@ export default function UserProfile() {
                     <EditInput
                         Icon={<FaUser />}
                         inputType={'text'}
-                        inputName={'name'}
-                        inputPlaceholder={'Uncle bob'}
+                        inputName={'fname'}
+                        inputPlaceholder={userDetails.fname}
+                    />
+                    <EditInput
+                        Icon={<FaUser />}
+                        inputType={'text'}
+                        inputName={'lname'}
+                        inputPlaceholder={userDetails.lname}
                     />
                     <EditInput
                         Icon={<FaEnvelope />}
                         inputType={'email'}
                         inputName={'email'}
-                        inputPlaceholder={'bob@gmail.com'}
+                        inputPlaceholder={userDetails.email}
                     />
                     <EditInput
                         Icon={<FaLock />}
                         inputType={'password'}
                         inputName={'password'}
-                        inputPlaceholder={'jsdfasjdfasdf'}
+                        inputPlaceholder={userDetails.password}
                     />
                     <EditInput
                         Icon={<FaFacebook />}
                         inputType={'text'}
-                        inputName={'fb_link'}
-                        inputPlaceholder={'https://www.facebook.com/'}
+                        inputName={'facebook'}
+                        inputPlaceholder={
+                            userDetails.facebook || 'Not provided'
+                        }
                     />
                     <EditInput
                         Icon={<FaInstagram />}
                         inputType={'text'}
-                        inputName={'insta_link'}
-                        inputPlaceholder={'https://www.instagram.com/'}
+                        inputName={'instagram'}
+                        inputPlaceholder={
+                            userDetails.instagram || 'Not provided'
+                        }
                     />
                     <EditInput
                         Icon={<FaTwitter />}
                         inputType={'text'}
-                        inputName={'tw_link'}
-                        inputPlaceholder={'https://www.twitter.com/'}
+                        inputName={'twitter'}
+                        inputPlaceholder={userDetails.twitter || 'Not provided'}
                     />
                 </Box>
 
@@ -82,7 +130,7 @@ export default function UserProfile() {
                     h="max-content"
                 >
                     <Image
-                        src="/bg.jpeg"
+                        src={userDetails.photo}
                         fit="cover"
                         w="28"
                         h="28"
@@ -140,6 +188,9 @@ export default function UserProfile() {
 // eslint-disable-next-line react/prop-types
 function EditInput({ Icon, inputType, inputName, inputPlaceholder }) {
     const [isDisabled, setDisabled] = useState(true);
+    const [showSaveAndContinue, setShowSave] = useState(false);
+    const [value, setValue] = useState(inputPlaceholder);
+
     const iconStyle = {
         display: 'inline',
         color: '#4d4d4d',
@@ -153,21 +204,61 @@ function EditInput({ Icon, inputType, inputName, inputPlaceholder }) {
                 variant={'ghost'}
                 px="3"
                 borderRadius={'none'}
-                w="90%"
+                w={showSaveAndContinue ? '83%' : '90%'}
                 type={inputType}
                 name={inputName}
-                value={inputPlaceholder}
+                value={value}
                 ml="0.5"
+                onChange={(e) => setValue(e.target.value)}
             />
-            <Button
-                onClick={() => {
-                    setDisabled(!isDisabled);
-                }}
-                variant={'ghost'}
-                size="sm"
-            >
-                {isDisabled ? 'Edit' : 'Cancel'}
-            </Button>
+            {showSaveAndContinue ? (
+                <>
+                    <Button
+                        onClick={async () => {
+                            setDisabled(!isDisabled);
+                            const { error, data } = await editUserData({
+                                [inputName]: value,
+                            });
+                            if (error) {
+                                alert('An error occured');
+                                return console.log(error);
+                            }
+                            if (data) {
+                                setShowSave(false);
+                                return setDisabled(true);
+                            }
+                            console.log(data);
+                        }}
+                        variant={'ghost'}
+                        colorScheme="yellow"
+                        size="sm"
+                    >
+                        Save
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            setShowSave(false);
+                            setDisabled(true);
+                            setValue(inputPlaceholder);
+                        }}
+                        variant={'ghost'}
+                        size="sm"
+                    >
+                        Cancel
+                    </Button>
+                </>
+            ) : (
+                <Button
+                    onClick={() => {
+                        setDisabled(!isDisabled);
+                        setShowSave(true);
+                    }}
+                    variant={'ghost'}
+                    size="sm"
+                >
+                    Edit
+                </Button>
+            )}
         </Box>
     );
 }
