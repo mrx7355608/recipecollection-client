@@ -12,7 +12,7 @@ import UserProfile from './pages/UserProfile';
 
 import { getUserData } from './services/user';
 import { useUser } from './contexts/user';
-import { Flex, Heading, Spinner } from '@chakra-ui/react';
+import { Flex, Spinner } from '@chakra-ui/react';
 
 const router = createBrowserRouter([
     {
