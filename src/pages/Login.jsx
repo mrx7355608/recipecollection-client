@@ -7,6 +7,7 @@ import {
     Button,
     VStack,
     Center,
+    Spinner,
 } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../services/auth';
@@ -14,6 +15,7 @@ import { useUser } from '../contexts/user';
 
 export default function Login() {
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
     const [loginData, setLoginData] = useState({
         email: '',
         password: '',
@@ -90,7 +92,7 @@ export default function Login() {
                         variant="solid"
                         type="submit"
                     >
-                        LOGIN
+                        {loading === false ? 'LOGIN' : <Spinner />}
                     </Button>
                 </form>
                 <Center>
@@ -118,8 +120,10 @@ export default function Login() {
     }
 
     async function loginUser(e) {
+        setLoading(true);
         e.preventDefault();
         const { error, data } = await login(loginData);
+        setLoading(false);
         if (error) return handleError(error);
         // Update user state
         userDispatcher({ type: 'LOGIN', user: data.user });
