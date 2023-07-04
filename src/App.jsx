@@ -13,6 +13,7 @@ import UserProfile from './pages/UserProfile';
 import { getUserData } from './services/user';
 import { useUser } from './contexts/user';
 import { Flex, Spinner } from '@chakra-ui/react';
+import CustomSpinner from './components/CustomSpinner';
 
 const router = createBrowserRouter([
     {
@@ -72,16 +73,7 @@ function App() {
     }, []);
 
     if (loading) {
-        return (
-            <Flex
-                alignItems={'center'}
-                justifyContent={'center'}
-                h="100vh"
-                w="100vw"
-            >
-                <Spinner size={'md'} color="yellow.500" />
-            </Flex>
-        );
+        return <CustomSpinner />;
     }
 
     return <RouterProvider router={router} />;
