@@ -1,7 +1,7 @@
 import { Flex } from '@chakra-ui/react';
 import Recipe from './Recipe/Card';
 
-export default function RecipesList() {
+export default function RecipesList({ recipes }) {
     return (
         <Flex
             alignItems={'center'}
@@ -10,11 +10,9 @@ export default function RecipesList() {
             gap={'8'}
             my={'12'}
         >
-            <Recipe />
-            <Recipe />
-            <Recipe />
-            <Recipe />
-            <Recipe />
+            {recipes.map((recipe) => {
+                return <Recipe key={recipe._id} recipe={recipe} />;
+            })}
         </Flex>
     );
 }

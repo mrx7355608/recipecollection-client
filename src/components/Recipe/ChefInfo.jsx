@@ -5,17 +5,14 @@ import {
     Heading,
     Image,
     Text,
+    Link,
 } from '@chakra-ui/react';
-import React from 'react';
-import {
-    FaFacebook,
-    FaInstagram,
-    FaMailchimp,
-    FaSnapchat,
-    FaTwitter,
-} from 'react-icons/fa';
+import { FaFacebook, FaInstagram, FaSnapchat, FaTwitter } from 'react-icons/fa';
 
-export default function ChefInfo() {
+export default function ChefInfo({ chef }) {
+    const { fullname, photo, facebook, instagram, twitter } = chef;
+    console.log({ twitter });
+
     return (
         <Flex
             direction={'column'}
@@ -30,7 +27,7 @@ export default function ChefInfo() {
                 About Chef
             </Heading>
             <Image
-                src="/hero.jpg"
+                src={photo}
                 borderRadius={'full'}
                 w="36"
                 h="32"
@@ -38,7 +35,7 @@ export default function ChefInfo() {
                 mt="12"
                 mb="9"
             />
-            <Heading fontSize={'xl'}>Charlie Puth</Heading>
+            <Heading fontSize={'xl'}>{fullname}</Heading>
             <Text mt="2" textAlign={'center'} mx="3" color="gray.700">
                 Lorem ipsum dolor sit amet, qui minim labore adipisicing minim
                 sint cillum sint consectetur cupidatat.
@@ -49,15 +46,21 @@ export default function ChefInfo() {
                 borderRadius={'full'}
                 colorScheme="gray"
             >
-                <Button p="0">
-                    <FaInstagram size="20" />
-                </Button>
-                <Button p="0">
-                    <FaFacebook size="20" />
-                </Button>
-                <Button p="0">
-                    <FaTwitter size="20" />
-                </Button>
+                <Link href={instagram} isExternal>
+                    <Button p="0">
+                        <FaInstagram size="20" />
+                    </Button>
+                </Link>
+                <Link href={facebook} isExternal>
+                    <Button p="0">
+                        <FaFacebook size="20" />
+                    </Button>
+                </Link>
+                <Link href={twitter} isExternal>
+                    <Button p="0">
+                        <FaTwitter size="20" />
+                    </Button>
+                </Link>
                 <Button p="0">
                     <FaSnapchat size="20" />
                 </Button>

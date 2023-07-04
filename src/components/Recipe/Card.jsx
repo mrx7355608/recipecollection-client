@@ -1,12 +1,13 @@
 import { Flex, Box, Button, Heading, Image, Text } from '@chakra-ui/react';
-import Tags from './Tags';
+import { Link } from 'react-router-dom';
 
-export default function Recipe() {
+export default function Recipe({ recipe }) {
+    const { thumbnail, _id, title, description, chef } = recipe;
     return (
         <Flex gap="2" h={'64'}>
             {/* Recipe image */}
             <Image
-                src="/hero.jpg"
+                src={thumbnail}
                 w={'60'}
                 borderRadius={'sm'}
                 h={'auto'}
@@ -25,29 +26,27 @@ export default function Recipe() {
             >
                 {/* Recipe title */}
                 <Heading mb="2" mt="1" fontSize={'xl'}>
-                    Special Italian Pasta
+                    {title}
                 </Heading>
-
-                {/* Tags of recipe */}
-                <Tags tags={['Italian']} />
 
                 {/* Description of a recipe */}
                 <Text mt="4" fontSize={'md'} color="gray.800">
-                    Lorem ipsum dolor sit amet, officia excepteur ex fugiat
-                    reprehenderit enim labore culpa sint ad nisi Lorem pariatur
-                    aliquip...
+                    {description}
                 </Text>
 
                 {/* Cook button */}
-                <Button
-                    mt="5"
-                    colorScheme="yellow"
-                    w={'full'}
-                    variant={'outline'}
-                    borderRadius={'sm'}
-                >
-                    Cook
-                </Button>
+                <Link to={'/recipes/' + _id}>
+                    <Button
+                        mt="5"
+                        colorScheme="yellow"
+                        w={'full'}
+                        variant={'outline'}
+                        borderRadius={'sm'}
+                    >
+                        Cook
+                    </Button>
+                </Link>
+                <Text>Recipe by: {chef.fullname}</Text>
             </Box>
         </Flex>
     );
