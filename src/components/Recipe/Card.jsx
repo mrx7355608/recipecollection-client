@@ -1,53 +1,51 @@
-import { Flex, Box, Button, Heading, Image, Text } from '@chakra-ui/react';
+import { Flex, Heading, Image, Text } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
+import StarRatings from '../StarRatings';
 
 export default function Recipe({ recipe }) {
-    const { thumbnail, _id, title, description, chef } = recipe;
+    const { thumbnail, _id, title, totalReviews, averageRatings, category } =
+        recipe;
     return (
-        <Flex gap="2" h={'64'}>
+        <Flex direction={'column'} h={'max-content'} mt="8">
             {/* Recipe image */}
             <Image
                 src={thumbnail}
-                w={'60'}
+                w={'sm'}
                 borderRadius={'sm'}
-                h={'auto'}
+                h={'56'}
                 fit={'cover'}
                 shadow={'md'}
             />
-            <Box
-                w={'sm'}
-                p="5"
-                borderRadius={'sm'}
-                _hover={{ cursor: 'pointer' }}
-                bg="white"
-                direction={'column'}
-                justifyContent={'flex-end'}
-                shadow={'md'}
+            <Text
+                mt="4"
+                color={'gray.400'}
+                fontSize={'sm'}
+                fontWeight={'semibold'}
             >
-                {/* Recipe title */}
-                <Heading mb="2" mt="1" fontSize={'xl'}>
-                    {title}
+                {category.toUpperCase()}
+            </Text>
+            {/* Recipe title */}
+            <Link to={'/recipes/' + _id}>
+                <Heading
+                    _hover={{
+                        color: 'yellow.500',
+                    }}
+                    mt="3"
+                    fontSize={'2xl'}
+                >
+                    {title.substring(0, 20)}
                 </Heading>
-
-                {/* Description of a recipe */}
-                <Text mt="4" fontSize={'md'} color="gray.800">
-                    {description}
+            </Link>
+            <Flex alignItems={'center'} gap="2">
+                <StarRatings
+                    ratings={averageRatings}
+                    size={18}
+                    fontSize={'md'}
+                />
+                <Text mt="1" color={'gray.600'} ml="1">
+                    {totalReviews} reviews
                 </Text>
-
-                {/* Cook button */}
-                <Link to={'/recipes/' + _id}>
-                    <Button
-                        mt="5"
-                        colorScheme="yellow"
-                        w={'full'}
-                        variant={'outline'}
-                        borderRadius={'sm'}
-                    >
-                        Cook
-                    </Button>
-                </Link>
-                <Text>Recipe by: {chef.fullname}</Text>
-            </Box>
+            </Flex>
         </Flex>
     );
 }
