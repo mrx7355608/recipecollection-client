@@ -1,13 +1,13 @@
-import { OrderedList, ListItem, Heading, Box } from '@chakra-ui/react';
+import { UnorderedList, ListItem, Heading, Box } from '@chakra-ui/react';
 
 // eslint-disable-next-line react/prop-types
 export default function RecipeIngredients({ ingredients }) {
     return (
         <>
-            <Heading fontSize={'2xl'} mt="1" mb="3">
+            <Heading fontSize={'4xl'} mt="12" mb="5">
                 Ingredients
             </Heading>
-            <OrderedList ml="7">
+            <UnorderedList ml="4" mb="12">
                 {ingredients.map((item, index) => {
                     return (
                         <ListItem
@@ -19,7 +19,7 @@ export default function RecipeIngredients({ ingredients }) {
                         </ListItem>
                     );
                 })}
-            </OrderedList>
+            </UnorderedList>
         </>
     );
 }

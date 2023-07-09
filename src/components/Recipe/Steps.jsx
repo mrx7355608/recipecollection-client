@@ -1,25 +1,33 @@
-import { Heading, OrderedList, ListItem, Box } from '@chakra-ui/react';
+import { Heading, Text, Box } from '@chakra-ui/react';
 
 // eslint-disable-next-line react/prop-types
 export default function Steps({ steps }) {
     return (
         <>
-            <Heading mt="1" fontSize={'2xl'} mb="4">
-                Steps
+            <Heading mt="1" fontSize={'4xl'} mb="4">
+                Directions
             </Heading>
-            <OrderedList ml="7">
+            <Box h="max-content">
                 {steps.map((step, index) => {
                     return (
-                        <ListItem
-                            key={index}
-                            _notLast={{ mb: '2' }}
-                            fontSize={'lg'}
-                        >
-                            {step}
-                        </ListItem>
+                        <Box key={index}>
+                            <Heading
+                                fontSize={'xl'}
+                                mb="1"
+                                textDecoration={'underline'}
+                                textDecorationColor={'yellow.400'}
+                                textDecorationThickness={'2px'}
+                                textUnderlineOffset={2}
+                            >
+                                Step {index + 1}
+                            </Heading>
+                            <Text mb="7" fontSize={'lg'}>
+                                {step}
+                            </Text>
+                        </Box>
                     );
                 })}
-            </OrderedList>
+            </Box>
         </>
     );
 }
