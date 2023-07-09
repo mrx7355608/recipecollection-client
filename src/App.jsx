@@ -14,6 +14,7 @@ import { getUserData } from './services/user';
 import { useUser } from './contexts/user';
 import { Flex, Spinner } from '@chakra-ui/react';
 import CustomSpinner from './components/CustomSpinner';
+import Searchpage from './pages/Searchpage';
 
 const router = createBrowserRouter([
     {
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
             {
                 path: '/profile',
                 element: <UserProfile />,
+            },
+            {
+                path: '/search',
+                element: <Searchpage />,
             },
         ],
     },
@@ -55,9 +60,7 @@ function App() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        document.body.style.background = 'rgb(245, 245, 245)';
         // Fetch user
-        console.log('fetching user');
         getUserData()
             .then((resp) => {
                 setLoading(false);
