@@ -1,47 +1,33 @@
-import { Flex, Box, Spinner, Heading, Text, Image } from '@chakra-ui/react';
+import { Flex, Box, Heading, Text, Image } from '@chakra-ui/react';
 import Ingredients from '../components/Recipe/Ingredients';
 import Steps from '../components/Recipe/Steps';
-import Details from '../components/Recipe/Details';
-import ChefInfo from '../components/Recipe/ChefInfo';
 import StarRatings from '../components/StarRatings';
 import VerticalDivider from '../components/VerticalDivider';
-import { useEffect, useState } from 'react';
-import { getRecipeById } from '../services/recipes';
 import { useParams } from 'react-router-dom';
 import ReviewsSection from '../components/Recipe/ReviewsSection';
+import useFetch from '../hooks/useFetch';
+import { clientConfig } from '../../config';
+import CustomSpinner from '../components/CustomSpinner';
 
 export default function Recipe() {
-    const [recipe, setRecipe] = useState({});
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(true);
-
     const { id } = useParams();
+    const { loading, error, data } = useFetch(
+        `${clientConfig.apiUrl}/recipes/${id}`
+    );
 
-    useEffect(() => {
-        (async function () {
-            try {
-                const response = await getRecipeById(id);
-                setLoading(false);
-                setRecipe(response);
-            } catch (err) {
-                setLoading(false);
-                setError(err.message);
-            }
-        })();
-    }, []);
-
-    if (loading) return <Spinner />;
+    if (loading) return <CustomSpinner />;
+    if (error) return <Heading>{error}</Heading>;
 
     return (
         <Flex w="60vw" mx="auto" direction={'column'} p="6" mt="10">
             {/* title, ratings and reviews */}
             <Heading fontSize={'4xl'}>
                 {' '}
-                {recipe.title.substring(0, 1).toUpperCase() +
-                    recipe.title.substring(1)}
+                {data.recipe.title.substring(0, 1).toUpperCase() +
+                    data.recipe.title.substring(1)}
             </Heading>
             <Flex alignItems={'center'}>
-                <StarRatings ratings={recipe.averageRatings} />
+                <StarRatings ratings={data.recipe.averageRatings} />
                 <VerticalDivider />
                 <Text
                     fontWeight={'semibold'}
@@ -51,7 +37,7 @@ export default function Recipe() {
                     textUnderlineOffset={4}
                     mt="1"
                 >
-                    {recipe.ratingsAndReviews.length} reviews
+                    {data.recipe.ratingsAndReviews.length} reviews
                 </Text>
                 <VerticalDivider />
                 <Text
@@ -62,13 +48,13 @@ export default function Recipe() {
                     textUnderlineOffset={4}
                     mt="1"
                 >
-                    {recipe.recipePhotos.length} photos
+                    {data.recipe.recipePhotos.length} photos
                 </Text>
             </Flex>
 
             {/* recipe description */}
             <Text mt="4" fontSize={'lg'}>
-                {recipe.description}
+                {data.recipe.description}
             </Text>
 
             {/* Chef, createdAt, updatedAt */}
@@ -84,29 +70,34 @@ export default function Recipe() {
                         textUnderlineOffset={4}
                         color="black"
                     >
-                        {recipe.chef.fullname}
+                        {data.recipe.chef.fullname}
                     </Text>
                 </Text>
                 <VerticalDivider />
                 <Text fontSize={'sm'} color={'gray.600'}>
-                    Pulished on {new Date(recipe.createdAt).toDateString()}
+                    Pulished on {new Date(data.recipe.createdAt).toDateString()}
                 </Text>
                 <VerticalDivider />
                 <Text fontSize={'sm'} color={'gray.600'}>
-                    Updated on {new Date(recipe.updatedAt).toDateString()}
+                    Updated on {new Date(data.recipe.updatedAt).toDateString()}
                 </Text>
             </Flex>
 
             {/* cooking time */}
             <Box bg={'gray.100'} p="5" mt="8">
                 <Text fontWeight={'semibold'}>Total cooking time</Text>
-                {recipe.cookingTime} minutes
+                {data.recipe.cookingTime} minutes
             </Box>
 
             {/* preview photos */}
-            <Image src={recipe.recipePhotos[0]} h={'400px'} mt="10" mb="3" />
+            <Image
+                src={data.recipe.recipePhotos[0]}
+                h={'400px'}
+                mt="10"
+                mb="3"
+            />
             <Flex alignItems={'center'} gap="3">
-                {recipe.recipePhotos.map((url, index) => {
+                {data.recipe.recipePhotos.map((url, index) => {
                     return (
                         <Image
                             _hover={{ cursor: 'pointer' }}
@@ -117,9 +108,9 @@ export default function Recipe() {
                     );
                 })}
             </Flex>
-            <Ingredients ingredients={recipe.ingredients} />
-            <Steps steps={recipe.steps} />
-            <ReviewsSection recipeId={recipe._id} />
+            <Ingredients ingredients={data.recipe.ingredients} />
+            <Steps steps={data.recipe.steps} />
+            <ReviewsSection recipeId={data.recipe._id} />
         </Flex>
     );
 }

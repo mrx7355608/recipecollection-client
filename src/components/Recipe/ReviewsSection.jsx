@@ -14,27 +14,25 @@ import { FaStar } from 'react-icons/fa';
 import StarRatingComponent from 'react-star-rating-component';
 import { postReviewRecipe } from '../../services/recipes';
 import StarRatings from '../StarRatings';
+import CustomSpinner from '../CustomSpinner';
+import useFetch from '../../hooks/useFetch';
 
 export default function ReviewsSection({ recipeId }) {
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
-    const [reviews, setReviews] = useState([]);
     const [stars, setStars] = useState(0);
     const [userReview, setUserReview] = useState('');
+    const [reviews, setReviews] = useState([]);
+
+    const { data, loading, error } = useFetch(
+        `http://localhost:8000/api/v1/recipes/${recipeId}/reviews`
+    );
 
     useEffect(() => {
-        const url = `http://localhost:8000/api/v1/recipes/${recipeId}/reviews`;
-        fetch(url)
-            .then((resp) => resp.json())
-            .then((data) => {
-                setLoading(false);
-                setReviews(data.reviews);
-            })
-            .catch((err) => {
-                setLoading(false);
-                setError(err.message);
-            });
-    }, []);
+        if (!data) return;
+        setReviews(data.reviews);
+    }, [data]);
+
+    if (loading) return <CustomSpinner />;
+    if (error) return <Heading>{error}</Heading>;
 
     return (
         <Box w="full" my="5" bg="white" borderRadius={'md'}>
@@ -75,7 +73,8 @@ export default function ReviewsSection({ recipeId }) {
                                 userReview,
                                 recipeId
                             );
-                            console.log(result);
+                            console.log(result.review.ratingsAndReviews);
+                            setReviews(result.review.ratingsAndReviews); // TODO: fix resp data object in server
                         }}
                         mt="12"
                         colorScheme="yellow"
@@ -89,7 +88,7 @@ export default function ReviewsSection({ recipeId }) {
             <VStack alignItems={'flex-start'}>
                 {loading ? <Spinner /> : null}
                 {error ? <Heading>{error}</Heading> : null}
-                {reviews.map(({ _id, user, review, stars }) => {
+                {reviews.map(({ _id, user, review, stars, createdAt }) => {
                     return (
                         <>
                             <Flex
@@ -114,7 +113,16 @@ export default function ReviewsSection({ recipeId }) {
                                     </Heading>
                                     <Text>{review}</Text>
                                 </Box>
-                                <StarRatings ratings={stars} />
+                                <Flex
+                                    direction={'column'}
+                                    alignItems={'flex-end'}
+                                    gap="1"
+                                >
+                                    <StarRatings ratings={stars} />
+                                    <Text fontSize={'sm'} color={'gray.600'}>
+                                        {new Date(createdAt).toDateString()}
+                                    </Text>
+                                </Flex>
                             </Flex>
                             <hr
                                 style={{

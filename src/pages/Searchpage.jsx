@@ -1,30 +1,21 @@
 import { Center, Box, Heading } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import CustomSpinner from '../components/CustomSpinner';
 import RecipesList from '../components/RecipesList';
-import { getSearchRecipes } from '../services/recipes';
+import useFetch from '../hooks/useFetch';
+import { clientConfig } from '../../config';
 
 export default function Searchpage() {
     const [searchParams, setSearchParams] = useSearchParams();
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [results, setResults] = useState([]);
+    const query = searchParams.get('query');
+    const { apiUrl } = clientConfig;
+    const { loading, error, data } = useFetch(
+        `${apiUrl}/recipes/search?query=${query}`
+    );
 
     useEffect(() => {
         window.scrollTo(0, 0);
-
-        (async function () {
-            try {
-                const query = searchParams.get('query');
-                const recipes = await getSearchRecipes(query);
-                setResults(recipes);
-                setLoading(false);
-            } catch (err) {
-                setLoading(false);
-                setError(err.message);
-            }
-        })();
     }, []);
 
     if (error) {
@@ -38,7 +29,7 @@ export default function Searchpage() {
                     Showing results for &quot;{searchParams.get('query')}&quot;
                 </Heading>
             </Center>
-            {loading ? <CustomSpinner /> : <RecipesList recipes={results} />}
+            {loading ? <CustomSpinner /> : <RecipesList recipes={data} />}
         </Box>
     );
 }

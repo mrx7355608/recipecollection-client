@@ -1,30 +1,29 @@
-import { useState, useEffect } from 'react';
-import { getRandomRecipes } from '../../services/recipes';
 import CustomSpinner from '../CustomSpinner';
 import { Box, Heading, Image, Flex, Text } from '@chakra-ui/react';
 import StarRatings from '../StarRatings';
+import useFetch from '../../hooks/useFetch';
+import { clientConfig } from '../../../config';
 
 export default function RandomRecipes() {
-    const [randomRecipes, setRandomRecipes] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        (async function () {
-            const res = await getRandomRecipes();
-            setLoading(false);
-            setRandomRecipes(res);
-        })();
-    }, []);
+    const { data, loading, error } = useFetch(
+        `${clientConfig.apiUrl}/recipes/random`
+    );
 
     if (loading) {
         return <CustomSpinner />;
     }
+
+    if (error) {
+        return <Heading>{error}</Heading>;
+    }
+
     return (
-        <Box bg="gray.50" p="5" w="60%" m="0">
-            {randomRecipes.map((recipe) => {
+        <Box bg="gray.100" px="5" py="2" w="70%" m="0">
+            {data.randomRecipes.map((recipe) => {
                 return (
-                    <Flex key={recipe._id} alignItems={'center'} gap="2">
+                    <Flex key={recipe._id} alignItems={'center'} gap="2" my="3">
                         <Image
+                            borderRadius={'sm'}
                             src={recipe.thumbnail}
                             fit="cover"
                             w="44"
