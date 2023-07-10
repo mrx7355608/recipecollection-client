@@ -130,6 +130,6 @@ export default function Login() {
         // Navigate user back to homapage
         // TODO: change the navigation from homepage, to the page user came from
         // like a redirect back
-        navigateTo('/');
+        navigateTo(-1);
     }
 }
