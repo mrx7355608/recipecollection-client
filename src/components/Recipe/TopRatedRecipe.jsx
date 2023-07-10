@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react';
-import { getTopRatedRecipe } from '../../services/recipes';
 import { Flex, Heading, Image, Text } from '@chakra-ui/react';
 import CustomSpinner from '../CustomSpinner';
 import useFetch from '../../hooks/useFetch';
