@@ -12,9 +12,9 @@ import UserProfile from './pages/UserProfile';
 
 import { getUserData } from './services/user';
 import { useUser } from './contexts/user';
-import { Flex, Spinner } from '@chakra-ui/react';
-import CustomSpinner from './components/CustomSpinner';
 import Searchpage from './pages/Searchpage';
+import { Flex, Heading } from '@chakra-ui/react';
+import { useErrorBoundary } from 'react-error-boundary';
 
 const router = createBrowserRouter([
     {
@@ -58,6 +58,7 @@ const router = createBrowserRouter([
 function App() {
     const { userDispatcher } = useUser();
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         // Fetch user
@@ -71,12 +72,28 @@ function App() {
             })
             .catch((err) => {
                 setLoading(false);
-                console.log(err.response.data.error); // TODO: Remove this
+                setError(err.message);
             });
     }, []);
 
     if (loading) {
-        return <CustomSpinner />;
+        return (
+            <Flex
+                w="100vw"
+                h="100vh"
+                alignItems={'center'}
+                justifyContent={'center'}
+                bg="white"
+            >
+                <Heading ml="5" fontSize="4xl" color="yellow.400" mt="3" mb="7">
+                    Cookbook
+                </Heading>
+            </Flex>
+        );
+    }
+
+    if (error) {
+        return <Heading>{error}</Heading>;
     }
 
     return <RouterProvider router={router} />;

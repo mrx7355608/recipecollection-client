@@ -16,14 +16,6 @@ export default function Home() {
 
     useEffect(() => window.scrollTo(0, 0), []);
 
-    if (loading) {
-        return <CustomSpinner />;
-    }
-
-    if (error) {
-        <Heading>{error}</Heading>;
-    }
-
     return (
         <>
             <Flex
@@ -37,7 +29,13 @@ export default function Home() {
                 <RandomRecipes />
             </Flex>
             <Flex direction={'column'} px="4" alignItems={'flex-start'} mt="12">
-                <RecipesList recipes={recipes.recipes} />
+                {loading ? (
+                    <CustomSpinner />
+                ) : error ? (
+                    <Heading>{error}</Heading>
+                ) : (
+                    <RecipesList recipes={recipes.recipes} />
+                )}
             </Flex>
         </>
     );

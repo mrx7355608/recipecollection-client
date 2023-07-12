@@ -18,10 +18,6 @@ export default function Searchpage() {
         window.scrollTo(0, 0);
     }, []);
 
-    if (error) {
-        return <Heading>{error}</Heading>;
-    }
-
     return (
         <Box minH={'100vh'} w="100vw">
             <Center my="10">
@@ -29,7 +25,13 @@ export default function Searchpage() {
                     Showing results for &quot;{searchParams.get('query')}&quot;
                 </Heading>
             </Center>
-            {loading ? <CustomSpinner /> : <RecipesList recipes={data} />}
+            {loading ? (
+                <CustomSpinner />
+            ) : error ? (
+                <Heading>{error}</Heading>
+            ) : (
+                <RecipesList recipes={data} />
+            )}
         </Box>
     );
 }
