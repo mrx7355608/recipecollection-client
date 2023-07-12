@@ -127,9 +127,6 @@ export default function Login() {
         if (error) return handleError(error);
         // Update user state
         userDispatcher({ type: 'LOGIN', user: data.user });
-        // Navigate user back to homapage
-        // TODO: change the navigation from homepage, to the page user came from
-        // like a redirect back
         navigateTo(-1);
     }
 }
