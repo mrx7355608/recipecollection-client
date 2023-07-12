@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 import {
     Text,
     Container,
@@ -7,12 +7,13 @@ import {
     Button,
     VStack,
     Center,
-    HStack,
-    Box,
+    Spinner,
 } from '@chakra-ui/react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { clientConfig } from '../../config';
+import { axiosClient } from '../axios_setup';
 
-export default function Login() {
+export default function Signup() {
     return (
         <VStack justifyContent="center" h="100%">
             <Container
@@ -25,7 +26,68 @@ export default function Login() {
                 <Heading mb="10" fontSize="3xl" color="gray.700">
                     Create your account
                 </Heading>
-                <Text mt="6" mb="4"></Text>
+
+                {/* Signup form */}
+                <SignupForm />
+
+                <Center>
+                    Already have an account?
+                    <Text
+                        fontWeight="bold"
+                        color="yellow.600"
+                        display="inline"
+                        ml="2"
+                    >
+                        <Link to="/auth/login">Login</Link>
+                    </Text>
+                </Center>
+            </Container>
+        </VStack>
+    );
+}
+
+function SignupForm() {
+    const [signupData, setSignupData] = useState({
+        fname: '',
+        lname: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+    });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const navigateTo = useNavigate();
+
+    function handleOnChange(e) {
+        const { name, value } = e.target;
+        setSignupData({ ...signupData, [name]: value });
+    }
+
+    async function signup(e) {
+        try {
+            e.preventDefault();
+            const url = `${clientConfig.apiUrl}/auth/signup`;
+            setLoading(true);
+            await axiosClient.post(url, signupData);
+            setLoading(false);
+            navigateTo('/auth/login');
+        } catch (err) {
+            const { error } = err.response.data;
+            setLoading(false);
+            setError(error);
+        }
+    }
+
+    return (
+        <>
+            {/* Error message box */}
+            {error ? (
+                <Text mt="6" mb="4" p="4" bg="red.100" color="red.700">
+                    {error}
+                </Text>
+            ) : null}
+
+            <form onSubmit={signup}>
                 <Input
                     borderWidth="2px"
                     fontSize="sm"
@@ -35,12 +97,14 @@ export default function Login() {
                     placeholder="First name"
                     type="text"
                     name="fname"
+                    onChange={handleOnChange}
                     _placeholder={{ color: 'gray.800' }}
                 />
                 <Input
                     borderWidth="2px"
                     fontSize="sm"
                     borderColor="gray.600"
+                    onChange={handleOnChange}
                     size="lg"
                     borderRadius="none"
                     placeholder="Last name"
@@ -53,6 +117,7 @@ export default function Login() {
                     borderWidth="2px"
                     fontSize="sm"
                     borderColor="gray.600"
+                    onChange={handleOnChange}
                     size="lg"
                     borderRadius="none"
                     placeholder="Email address"
@@ -69,6 +134,7 @@ export default function Login() {
                     placeholder="Password"
                     type="password"
                     name="password"
+                    onChange={handleOnChange}
                     mt="4"
                     _placeholder={{ color: 'gray.800' }}
                 />
@@ -80,6 +146,7 @@ export default function Login() {
                     borderRadius="none"
                     placeholder="Confirm Password"
                     type="password"
+                    onChange={handleOnChange}
                     name="confirmPassword"
                     mt="4"
                     _placeholder={{ color: 'gray.800' }}
@@ -93,21 +160,11 @@ export default function Login() {
                     mb="7"
                     fontSize="sm"
                     variant="solid"
+                    type="submit"
                 >
-                    SIGNUP
+                    {loading ? <Spinner /> : 'SIGNUP'}
                 </Button>
-                <Center>
-                    Already have an account?
-                    <Text
-                        fontWeight="bold"
-                        color="yellow.600"
-                        display="inline"
-                        ml="2"
-                    >
-                        <Link to="/auth/login">Login</Link>
-                    </Text>
-                </Center>
-            </Container>
-        </VStack>
+            </form>
+        </>
     );
 }
