@@ -16,11 +16,13 @@ import { postReviewRecipe } from '../../services/recipes';
 import StarRatings from '../StarRatings';
 import CustomSpinner from '../CustomSpinner';
 import useFetch from '../../hooks/useFetch';
+import { useUser } from '../../contexts/user';
 
 export default function ReviewsSection({ recipeId }) {
     const [stars, setStars] = useState(0);
     const [userReview, setUserReview] = useState('');
     const [reviews, setReviews] = useState([]);
+    const { user } = useUser();
 
     const { data, loading, error } = useFetch(
         `http://localhost:8000/api/v1/recipes/${recipeId}/reviews`
@@ -40,51 +42,65 @@ export default function ReviewsSection({ recipeId }) {
                 Reviews
             </Heading>
             {/* Star ratings */}
-            <Flex
-                direction={'column'}
-                gap="2"
-                alignItems={'flex-start'}
-                mt="5"
-                mb="12"
-            >
-                <StarRatingComponent
-                    starCount={5}
-                    starColor="orange"
-                    name="stars"
-                    value={stars}
-                    renderStarIcon={() => <FaStar size={'22'} />}
-                    onStarClick={(nextValue) => setStars(nextValue)}
-                />
-                <Box>
-                    <Textarea
-                        placeholder="Write your review here"
-                        mt="3"
-                        resize={'none'}
-                        w="lg"
-                        mb="6"
-                        p="4"
-                        borderRadius={'sm'}
-                        onChange={(e) => setUserReview(e.target.value)}
-                    ></Textarea>
-                    <Button
-                        onClick={async () => {
-                            const result = await postReviewRecipe(
-                                stars,
-                                userReview,
-                                recipeId
-                            );
-                            console.log(result.review.ratingsAndReviews);
-                            setReviews(result.review.ratingsAndReviews); // TODO: fix resp data object in server
-                        }}
-                        mt="12"
-                        colorScheme="yellow"
-                        borderRadius={'sm'}
-                        ml="3"
-                    >
-                        Review
-                    </Button>
-                </Box>
-            </Flex>
+            {user ? (
+                <Flex
+                    direction={'column'}
+                    gap="2"
+                    alignItems={'flex-start'}
+                    mt="5"
+                    mb="12"
+                >
+                    <StarRatingComponent
+                        starCount={5}
+                        starColor="orange"
+                        name="stars"
+                        value={stars}
+                        renderStarIcon={() => <FaStar size={'22'} />}
+                        onStarClick={(nextValue) => setStars(nextValue)}
+                    />
+                    <Box>
+                        <Textarea
+                            placeholder="Write your review here"
+                            mt="3"
+                            resize={'none'}
+                            w="lg"
+                            mb="6"
+                            p="4"
+                            borderRadius={'sm'}
+                            onChange={(e) => setUserReview(e.target.value)}
+                        ></Textarea>
+                        <Button
+                            onClick={async () => {
+                                const result = await postReviewRecipe(
+                                    stars,
+                                    userReview,
+                                    recipeId
+                                );
+                                console.log(result.review.ratingsAndReviews);
+                                setReviews(result.review.ratingsAndReviews); // TODO: fix resp data object in server
+                            }}
+                            mt="12"
+                            colorScheme="yellow"
+                            borderRadius={'sm'}
+                            ml="3"
+                        >
+                            Review
+                        </Button>
+                    </Box>
+                </Flex>
+            ) : (
+                <Heading
+                    w="full"
+                    p="5"
+                    bg="yellow.200"
+                    color={'yellow.800'}
+                    fontSize={'md'}
+                    mt="4"
+                    mb="10"
+                >
+                    Login to add a review
+                </Heading>
+            )}
             <VStack alignItems={'flex-start'}>
                 {loading ? <Spinner /> : null}
                 {error ? <Heading>{error}</Heading> : null}
