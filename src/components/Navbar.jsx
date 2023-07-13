@@ -227,7 +227,8 @@ function UserProfileAndLogoutButton() {
                 w="6"
                 fit={'cover'}
                 borderRadius={'full'}
-                mr="1"
+                mr="2"
+                h="6"
             />
             <Link to="/profile">
                 <Heading
@@ -235,6 +236,7 @@ function UserProfileAndLogoutButton() {
                     mr="3"
                     fontWeight={'medium'}
                     _hover={{ color: 'yellow.500' }}
+                    mt="1"
                 >
                     {user.fullname}
                 </Heading>
