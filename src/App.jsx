@@ -9,12 +9,12 @@ import Recipe from './pages/Recipe';
 import MainLayout from './layouts/MainLayout';
 import AuthLayout from './layouts/AuthLayout';
 import UserProfile from './pages/UserProfile';
+import ProtectedRoute from './components/ProtectedRoute';
 
 import { getUserData } from './services/user';
 import { useUser } from './contexts/user';
 import Searchpage from './pages/Searchpage';
 import { Flex, Heading } from '@chakra-ui/react';
-import { useErrorBoundary } from 'react-error-boundary';
 
 const router = createBrowserRouter([
     {
@@ -31,7 +31,11 @@ const router = createBrowserRouter([
             },
             {
                 path: '/profile',
-                element: <UserProfile />,
+                element: (
+                    <ProtectedRoute>
+                        <UserProfile />,
+                    </ProtectedRoute>
+                ),
             },
             {
                 path: '/search',
@@ -90,10 +94,6 @@ function App() {
                 </Heading>
             </Flex>
         );
-    }
-
-    if (error) {
-        return <Heading>{error}</Heading>;
     }
 
     return <RouterProvider router={router} />;
