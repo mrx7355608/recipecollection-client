@@ -6,7 +6,7 @@ export default function useFetch(url) {
     const [data, setData] = useState(null);
 
     useEffect(() => {
-        fetch(url)
+        fetch(url, { credentials: 'include' })
             .then((resp) => resp.json())
             .then((data) => {
                 setLoading(false);
