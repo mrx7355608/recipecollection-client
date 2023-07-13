@@ -1,55 +1,39 @@
+import { useRef, useState } from 'react';
 import {
     Box,
     Image,
-    Flex,
     VStack,
     Button,
     Heading,
     HStack,
+    Input,
 } from '@chakra-ui/react';
-import Card from '../components/Recipe/Card';
-import {
-    FaEnvelope,
-    FaFacebook,
-    FaInstagram,
-    FaTwitter,
-    FaLock,
-    FaUser,
-} from 'react-icons/fa';
-import { useEffect } from 'react';
-import { useUser } from '../contexts/user';
-import { useNavigate } from 'react-router-dom';
+import { FaFacebook, FaInstagram, FaTwitter, FaUser } from 'react-icons/fa';
 import EditInput from '../components/User/EditableInput';
+import useFetch from '../hooks/useFetch';
+import { clientConfig } from '../../config';
+import CustomSpinner from '../components/CustomSpinner';
+import axios from 'axios';
+import { axiosClient } from '../axios_setup';
 
 export default function UserProfile() {
-    const { user } = useUser();
-    const navigateTo = useNavigate();
+    const { loading, error, data } = useFetch(`${clientConfig.apiUrl}/user`);
 
-    useEffect(() => {
-        if (!user) return navigateTo('/');
-    }, [user]);
+    if (loading) {
+        return <CustomSpinner />;
+    }
+
+    if (error) {
+        return <Heading>{error}</Heading>;
+    }
 
     return (
         <VStack my="10" p="5" gap="5" justifyContent={'center'} w="full">
             <HStack gap="5" alignItems={'flex-start'} w="full">
                 {/* USER DETAILS */}
-                <ProfileDataBoxComponent user={user} />
-                <ProfilePictureComponent photoUrl={user.photo} />
+                <ProfileDataBoxComponent user={data.user} />
+                <ProfilePictureComponent photoUrl={data.user.photo} />
             </HStack>
-
-            {/* RECIPES GRID */}
-            <Heading mt="12">Your Recipes</Heading>
-            <RecipesGridComponent />
-            <Button
-                fontSize="sm"
-                borderRadius={'sm'}
-                bg="gray.700"
-                size="lg"
-                color="white"
-                w="40%"
-            >
-                LOAD MORE
-            </Button>
         </VStack>
     );
 }
@@ -59,6 +43,9 @@ export default function UserProfile() {
 //                                          ********************************
 
 function ProfilePictureComponent({ photoUrl }) {
+    const [image, setImage] = useState(null);
+    const imageInputRef = useRef(null);
+
     return (
         <Box
             p="5"
@@ -77,6 +64,15 @@ function ProfilePictureComponent({ photoUrl }) {
                 mx="auto"
                 my="5"
             />
+            <Input
+                type="file"
+                ref={imageInputRef}
+                accept="image/*"
+                hidden
+                onChange={(e) => {
+                    setImage(e.target.files[0]);
+                }}
+            />
             <Button
                 mt="3"
                 variant={'outline'}
@@ -85,10 +81,43 @@ function ProfilePictureComponent({ photoUrl }) {
                 borderRadius="none"
                 w="full"
                 mb="2"
+                onClick={() => {
+                    imageInputRef.current.click();
+                }}
             >
                 Select photo
             </Button>
-            <Button borderRadius="none" bg="gray.800" color="white" w="full">
+            <Button
+                onClick={() => {
+                    if (!image) return alert('No image selected');
+                    if (image && /image/.test(image.type) === false) {
+                        return alert('Please select an image');
+                    }
+                    console.log('uploading...');
+                    const formData = new FormData();
+                    formData.append('file', image);
+                    formData.append('upload_preset', 'cookbook');
+                    axios
+                        .post(
+                            `https://api.cloudinary.com/v1_1/${clientConfig.cloudinaryCloudName}/image/upload`,
+                            formData
+                        )
+                        .then(async (resp) => {
+                            console.log(resp.data);
+                            console.log('saving on server');
+                            const res = await axiosClient.patch(
+                                `${clientConfig.apiUrl}/user`,
+                                { photo: resp.data.secure_url }
+                            );
+                            console.log(res.data);
+                        })
+                        .catch((err) => console.log(err.message));
+                }}
+                borderRadius="none"
+                bg="gray.800"
+                color="white"
+                w="full"
+            >
                 Upload
             </Button>
         </Box>
@@ -114,18 +143,6 @@ function ProfileDataBoxComponent({ user }) {
                 inputPlaceholder={user.lname}
             />
             <EditInput
-                Icon={<FaEnvelope />}
-                inputType={'email'}
-                inputName={'email'}
-                inputPlaceholder={user.email}
-            />
-            <EditInput
-                Icon={<FaLock />}
-                inputType={'password'}
-                inputName={'password'}
-                inputPlaceholder={user.password}
-            />
-            <EditInput
                 Icon={<FaFacebook />}
                 inputType={'text'}
                 inputName={'facebook'}
@@ -144,21 +161,5 @@ function ProfileDataBoxComponent({ user }) {
                 inputPlaceholder={user.twitter || 'Not provided'}
             />
         </Box>
-    );
-}
-
-function RecipesGridComponent() {
-    return (
-        <Flex
-            wrap={'wrap'}
-            justifyContent="flex-start"
-            alignItems={'center'}
-            gap="5"
-        >
-            <Card />
-            <Card />
-            <Card />
-            <Card />
-        </Flex>
     );
 }
